@@ -1,19 +1,33 @@
 import PropTypes from 'prop-types';
+import { Contact, Button } from './ContactItem.styled';
+import { deleteContact } from 'redux/operations';
+import { useDispatch } from 'react-redux';
+import { Notify } from 'notiflix';
+import { updateDate } from '../../utils/formatDate';
 
-const ContactItem = ({ id, name, number, onDeleteContact }) => {
-  <li>
-    {name}: {number}
-    <button type="button" onClick={() => onDeleteContact(id)}>
-      Delete
-    </button>
-  </li>;
+export const ContactItem = ({ name, phone, id, date }) => {
+  const dispatch = useDispatch();
+  const newDate = updateDate(date);
+
+  const handleDelete = () => {
+    dispatch(deleteContact(id));
+    Notify.info(`Contact ${name} deleted`);
+  };
+
+  return (
+    <Contact>
+      {name} : {phone} <br />
+      {newDate}
+      <Button type="button" id={id} onClick={handleDelete}>
+        Delete
+      </Button>
+    </Contact>
+  );
 };
 
 ContactItem.propTypes = {
-  contactId: PropTypes.string.isRequired,
+  phone: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  number: PropTypes.string.isRequired,
-  onDeleteContact: PropTypes.func.isRequired,
+  id: PropTypes.string.isRequired,
+  date: PropTypes.string.isRequired,
 };
-
-export default ContactItem;

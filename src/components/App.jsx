@@ -1,17 +1,31 @@
-import React from 'react';
-import './App.css';
-import ContactForm from './ContactForm/ContactForm';
-import ContactList from './ContactList/ContactList';
-import Filter from "./Filter/Filter";
+import { ContactForm, ContactList, Filter } from './index';
+import { Box } from '../styles/index';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchContacts } from 'redux/operations';
+import { selectIsLoading, selectError } from 'redux/selectors';
 
-export default function App() {
+export const App = () => {
+  const dispatch = useDispatch();
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
   return (
-    <div className="App">
-      <h1>Phonebook</h1>
+    <Box mx="auto" width="360px">
+      <Box as="h1" fontSize={30}>
+        Phonebook
+      </Box>
       <ContactForm />
-      <h2>Contacts</h2>
-      <Filter/>
+      <Box as="h2" fontSize={24}>
+        Contacts
+      </Box>
+      <Filter />
+      {isLoading && !error && <b>Request in progress...</b>}
       <ContactList />
-    </div>
+    </Box>
   );
-}
+};

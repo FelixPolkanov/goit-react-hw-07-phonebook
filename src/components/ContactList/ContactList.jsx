@@ -1,41 +1,24 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Contact, Button } from './ContactList.styled';
-import { remove } from '../../redux/ToolkitSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { Contacts, TotalContacts } from './ContactList.styled';
+import { ContactItem } from '../ContactItem/ContactItem';
+import { useSelector } from 'react-redux';
+import { selectVisibleContacts } from 'redux/selectors';
 
-const ContactList = () => {
-  const dispatch = useDispatch();
-  const contacts = useSelector(state => state.contacts);
-  const filter = useSelector(state => state.filter);
-
-  const normalizedFilter = filter.toLowerCase();
-  const visibleContacts = contacts.filter(contact =>
-    contact.name.toLowerCase().includes(normalizedFilter)
-  );
+export const ContactList = () => {
+  const contacts = useSelector(selectVisibleContacts);
+  const totalContacts = contacts.length;
 
   return (
-    <ul>
-      {visibleContacts.map(({ id, name, number }) => (
-        <Contact key={id}>
-          {name}: {number}
-          <Button type="button" onClick={() => dispatch(remove(id))}>
-            Delete
-          </Button>
-        </Contact>
+    <Contacts>
+      {contacts.map(({ phone, name, id, createdAt }) => (
+        <ContactItem
+          key={id}
+          phone={phone}
+          name={name}
+          id={id}
+          date={createdAt}
+        />
       ))}
-    </ul>
+      <TotalContacts>Total contacts: {totalContacts}</TotalContacts>
+    </Contacts>
   );
-};
-
-export default ContactList;
-
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    }).isRequired
-  ),
 };
